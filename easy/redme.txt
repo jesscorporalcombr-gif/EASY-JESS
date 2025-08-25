@@ -1,0 +1,14 @@
+conexoes:
+
+Essas têm que mudar para os dados do servidor:
+
+* mudar config.php
+
+* consulta anamnese tem duas conexões para funções diferentes. Estão na pasta CONEXAO.PHP
+
+* a loja tem CONF.PHP e CONEXAO.PHP própria, mas apontando para o mesmo banco.
+
+* a CONEXAO.PHP da agenda coletiva está em: easy\agenda\evento\action
+
+
+* Consultas tem seu proprio CSS JS..

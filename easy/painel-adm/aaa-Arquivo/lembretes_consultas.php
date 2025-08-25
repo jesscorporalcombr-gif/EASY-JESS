@@ -1,0 +1,1012 @@
+<?php 
+$pag = 'lembretes_consultas';
+@session_start();
+
+require_once('../conexao.php');
+require_once('../conexao/conexao.php');
+//include('../consultas/conexao_busca_nome.php');
+require_once('verificar-permissao.php');
+
+?>
+
+<link rel="stylesheet" type="text/css" href="../vendor/login/css/util.css">
+<link rel="stylesheet" type="text/css" href="../vendor/login/css/main.css">
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+
+	 <h4 style="font-size: 14px;  font-style:normal;" class="text-uppercase">Agendamento Consulta/Avaliação</h4> &nbsp;&nbsp;&nbsp;&nbsp;
+
+	 <a style="font-size: 13px;  " href="index.php?pagina=agenda_grupo"
+	 type="button" class="">Ver Agenda em Quadro</a>
+	 &nbsp;&nbsp;&nbsp;&nbsp;
+
+
+</nav>
+
+
+<div class="col-md-7"> <!--  Botão com edição para roxo e rosa -->
+	<div class="col-md-3">
+		</br>
+		 <a style="font-size: 12px;  " href="index.php?pagina=<?php echo $pag ?>&funcao=novo" type="button" class="login100-form-btn">Nova Consulta</a>
+	</div>
+</div>
+
+<!--<a href="index.php?pagina=<?php echo $pag ?>&funcao=novo" type="button" class="btn btn-secondary mt-2">Nova documento</a> -->
+
+<div class="mt-4" style="margin-right:25px">
+	<?php 
+	$query = $pdo->query("SELECT * from agendar_conectado order by id desc");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg = @count($res);
+	if($total_reg > 0){ 
+		?>
+		<small>
+			<table id="example" class="table table-hover my-4" style="width:100%">
+				<thead>
+					<tr>					
+						<th>Data Atendimento</th>
+						<th>Inicio</th>
+						<th>Fim</th>												
+						<th>Agendado Por</th>
+						<th>Cliente</th>
+						<th>Tel. Cli.</th>
+						<th>Protocolo</th>
+						<th>Equipamento</th>
+						<th>Sala.</th>
+						<th>Status</th>
+						<th>Situação</th>
+						<th>Obs.</th>												
+						<th>Ações</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<?php 
+					for($i=0; $i < $total_reg; $i++){
+						foreach ($res[$i] as $key => $value){	}
+
+
+						$id_tel = $res[$i]['cliente'];
+						$query_tel = $pdo->query("SELECT celular from clientes where nome = '$id_tel' limit 1");
+						$res_tel = $query_tel->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_tel = $res_tel[0]['celular'];
+
+
+						$id_usu = $res[$i]['usuario'];
+						$query_p = $pdo->query("SELECT * from usuarios where id = '$id_usu' limit 1");
+						$res_p = $query_p->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_usu = $res_p[0]['nome'];
+
+
+						$id_proc = $res[$i]['procedimento'];
+						$query_proc = $pdo->query("SELECT * from servicos where id = '$id_proc' limit 1");
+						$res_proc = $query_proc->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_procedimento = $res_proc[0]['nome'];
+
+
+						$id_equipamento = $res[$i]['equipamento'];
+						$query_equipamento = $pdo->query("SELECT * from equipamento where id = '$id_equipamento' limit 1");
+						$res_equipamento = $query_equipamento->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_equipamento = $res_equipamento[0]['nome'];
+
+						$id_sala = $res[$i]['sala'];
+						$query_sala = $pdo->query("SELECT * from salas where id = '$id_sala' limit 1");
+						$res_sala = $query_sala->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_sala = $res_sala[0]['nome'];
+
+
+						$id_profissional = $res[$i]['profissional'];
+						$query_profissional = $pdo->query("SELECT * from usuarios where id = '$id_profissional' limit 1");
+						$res_profissional = $query_profissional->fetchAll(PDO::FETCH_ASSOC);
+						@$nome_profissional = $res_profissional[0]['nome'];
+
+						
+
+						$extensao = strchr($res[$i]['arquivo'], '.');
+						if($extensao == '.pdf'){
+							$arquivo_pasta = 'pdf.png';
+						}else{
+							$arquivo_pasta = $res[$i]['arquivo'];
+						}
+						
+
+						?>
+
+						<tr>
+
+							
+							<td><?php echo implode('/', array_reverse(explode('-', $res[$i]['data']))); ?></td>	
+
+							<td><?php echo implode(':', str_split(sprintf('%04s', $res[$i]['inicio']), 2)); ?></td>
+							<td><?php echo implode(':', str_split(sprintf('%04s', $res[$i]['fim']), 2)); ?></td>
+
+							
+							<td><?php echo $nome_usu ?></td>
+
+							<td><?php echo $res[$i]['cliente'] ?></td>
+							<td><?php echo @$nome_tel ?></td>
+							<td><?php echo $nome_procedimento ?></td>
+							<td><?php echo $nome_equipamento ?></td>	
+							<td><?php echo $nome_sala ?></td>
+							<td><?php echo $res[$i]['status'] ?></td>	
+							<td><?php echo $res[$i]['situacao'] ?></td>	
+							<td><?php echo $res[$i]['descricao'] ?></td>							
+							
+						<td>
+							<?php if($res[$i]['data'] != 'Sim'){ ?>
+								<a href="index.php?pagina=<?php echo $pag ?>&funcao=editar&id=<?php echo $res[$i]['id'] ?>" title="Editar Registro" style="text-decoration: none">
+									<i class="bi bi-pencil-square text-primary"></i>
+								</a>
+
+								<a href="index.php?pagina=<?php echo $pag ?>&funcao=deletar&id=<?php echo $res[$i]['id'] ?>" title="Excluir Registro" style="text-decoration: none">
+									<i class="bi bi-archive text-danger mx-1"></i>
+								</a>
+
+
+								<!--
+								<a href="index.php?pagina=<?php echo $pag ?>&funcao=baixar&id=<?php echo $res[$i]['id'] ?>" title="Baixar Registro" style="text-decoration: none">
+									<i class="bi bi-check-square-fill text-success mx-1"></i>
+
+								</a> 
+							-->
+
+							<?php } ?>
+
+						</td>
+					</tr>
+
+				<?php } ?>
+
+			</tbody>
+
+		</table>
+	</small>
+<?php }else{
+	echo '<p>Não existem dados para serem exibidos!!';
+} ?>
+</div>
+
+
+<?php 
+if(@$_GET['funcao'] == "editar"){
+	$titulo_modal = 'Editar Agendamento';
+	$query = $pdo->query("SELECT * from agendar_conectado where id = '$_GET[id]'");
+	$res = $query->fetchAll(PDO::FETCH_ASSOC);
+	$total_reg = @count($res);
+	if($total_reg > 0){ 
+
+		@$valor = $res[0]['valor'];
+		$descricao = $res[0]['descricao'];
+		$arquivo = $res[0]['arquivo'];
+		$data = $res[0]['data'];
+		$status = $res[0]['status'];
+		$inicio = $res[0]['inicio'];
+		$fim = $res[0]['fim'];
+		$sala = $res[0]['sala'];
+		$equipamento = $res[0]['equipamento'];
+		$equipamento_2 = $res[0]['equipamento_2'];
+		$produtos = $res[0]['produtos'];
+		$produtos_2 = $res[0]['produtos_2'];
+		$cliente = $res[0]['cliente'];
+		$procedimento = $res[0]['procedimento'];
+		$procedimento_2 = $res[0]['procedimento_2'];
+		$tel_cliente = $res[0]['tel_cliente'];
+		$profissional = $res[0]['profissional'];
+		$situacao = $res[0]['situacao'];
+
+
+
+		$id_proc_modal = $procedimento;
+		$query_proc_modal = $pdo->query("SELECT * from servicos where id = '$id_proc_modal' limit 1");
+		$res_proc_modal = $query_proc_modal->fetchAll(PDO::FETCH_ASSOC);
+		@$nome_procedimento_modal = $res_proc_modal[0]['nome'];
+
+
+
+		$id_produtos_modal = $produtos;
+		$query_produtos_modal = $pdo->query("SELECT * from produtos where id = '$id_produtos_modal' limit 1");
+		$res_produtos_modal = $query_produtos_modal->fetchAll(PDO::FETCH_ASSOC);
+		@$nome_produtos_modal = $res_produtos_modal[0]['nome'];
+
+
+		$id_equipamento_modal = $equipamento;
+		$query_equipamento_modal = $pdo->query("SELECT * from equipamento where id = '$id_equipamento_modal' limit 1");
+		$res_equipamento_modal = $query_equipamento_modal->fetchAll(PDO::FETCH_ASSOC);
+		@$nome_equipamento_modal = $res_equipamento_modal[0]['nome'];
+
+		$id_sala_modal = $sala;
+		$query_sala_modal = $pdo->query("SELECT * from salas where id = '$id_sala_modal' limit 1");
+		$res_sala_modal = $query_sala_modal->fetchAll(PDO::FETCH_ASSOC);
+		@$nome_sala_modal = $res_sala_modal[0]['nome'];
+
+		$id_profissional_modal = $profissional;
+		$query_profissional_modal = $pdo->query("SELECT * from usuarios where id = '$id_profissional_modal' limit 1");
+		$res_profissional_modal = $query_profissional_modal->fetchAll(PDO::FETCH_ASSOC);
+		@$nome_profissional_modal = $res_profissional_modal[0]['nome'];
+
+
+
+
+
+
+		$extensao2 = strchr($arquivo, '.');
+		if($extensao2 == '.pdf'){
+			$arquivo_pasta2 = 'pdf.png';
+		}else{
+			$arquivo_pasta2 = $arquivo;
+		}
+
+	}
+}else{
+	$titulo_modal = 'Inserir Agendamento';
+}
+?>
+
+
+<div class="modal fade" tabindex="-1" id="modalCadastrar" data-bs-backdrop="static">
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title"><?php echo $titulo_modal ?></h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form method="POST" id="form">
+				<div class="modal-body">
+
+					
+
+				<div class="row">
+					<div class="col-md-6">
+						 <div class="mb-3">
+											
+						<!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+			              <?php /*busca pacientes na tabela orcamentoe join agendados conectados*/
+			              
+			                 $sql_code_cliente = "SELECT
+													 DISTINCT o.cliente_nome
+													FROM
+													  orcamentos as o
+													JOIN
+													  agendar_conectado as a
+													ON
+													  o.status = 'Pago' and a.situacao != 'Concluido'  
+													ORDER BY
+ 													  o.cliente_nome";
+			                 $sql_query_cliente = $conexao->query($sql_code_cliente) or die($conexao->error);                  
+			               ?>
+			               <label for="exampleFormControlInput1" class="form-label">Paciente</label>
+			                <select data-width="100%" class="form-control mr-1" id="cliente" required="" 
+			                
+			                    <?php if(isset($_GET['cliente_nome'])) echo "disabled"; ?>  name="cliente" >
+			                    
+			                    <option class="form-control" value="<?php echo @$cliente ?>" ><?php echo @$cliente ?></option>
+
+			                    <?php while($nome_cli = $sql_query_cliente->fetch_assoc()) { ?> 
+
+			                    <option 
+								<?php if(isset($_GET['cliente_nome']) && $_GET['cliente_nome'] == $nome_cli['id']) echo "selected"; ?> value="<?php echo $nome_cli['cliente_nome']; ?>"><?php echo $nome_cli['cliente_nome'];?>		                      
+			                    </option>
+			                    <?php } ?>
+			                </select>
+
+			                 
+			                <!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+						</div>
+
+					</div>
+
+					<div class="col-md-3">
+							<div class="mb-3">
+								<label for="exampleFormControlInput1" class="form-label">Data Atendimento</label>
+								<input type="date" class="form-control" id="data" name="data" value="<?php echo @$data ?>">
+							</div> 
+
+					</div>	
+
+					
+
+
+					<div class="col-md-3">
+						 <div class="mb-3">											
+							<!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+				              <?php
+				                 $sql_code_states = "SELECT * FROM salas ORDER BY nome ASC";
+				                 $sql_query_states = $conexao->query($sql_code_states) or die($conexao->error);                  
+				               ?>
+				               <label for="exampleFormControlInput1" class="form-label">Sala</label>
+				                <select data-width="100%" class="form-control mr-1" id="sala"  
+				                
+				                    <?php if(isset($_GET['nome'])) echo "disabled"; ?>  name="sala" >
+				                    
+				                    <option class="form-control" value="<?php echo @$sala ?>" ><?php echo @$nome_sala_modal ?></option>
+
+				                    <?php while($nome = $sql_query_states->fetch_assoc()) { ?> 
+				                    <option 
+				                    <?php if(isset($_GET['nome']) && $_GET['nome'] == $nome['id']) echo "selected"; ?> value="<?php echo $nome['id']; ?>"><?php echo $nome['nome']; ?>
+				                      
+				                    </option>
+				                    <?php } ?>
+				                </select>
+				                <!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+
+						</div> 
+				    </div>
+
+
+				</div>
+
+
+				<div class="row"> <!-- grupo -->
+					<div class="col-md-3">
+						 <div class="mb-3">
+												
+								<label for="exampleFormControlInput1" class="form-label">Horário Inicial</label>
+								<select class="form-select mt-1" aria-label="Default select example" name="inicio" >
+									
+									<option <?php if(@$inicio == '--'){ ?> selected <?php } ?>  value="--">--</option>
+
+									<option <?php if(@$inicio == '0700'){ ?> selected <?php } ?>  value="0700">07:00</option>
+									<option <?php if(@$inicio == '0730'){ ?> selected <?php } ?>  value="0730">07:30</option>
+									<option <?php if(@$inicio == '0800'){ ?> selected <?php } ?>  value="0800">08:00</option>
+									<option <?php if(@$inicio == '0830'){ ?> selected <?php } ?>  value="0830">08:30</option>
+									<option <?php if(@$inicio == '0900'){ ?> selected <?php } ?>  value="0900">09:00</option>
+									<option <?php if(@$inicio == '0930'){ ?> selected <?php } ?>  value="0930">09:30</option>
+									<option <?php if(@$inicio == '1000'){ ?> selected <?php } ?>  value="1000">10:00</option>
+									<option <?php if(@$inicio == '1030'){ ?> selected <?php } ?>  value="1030">10:30</option>
+
+									<option <?php if(@$inicio == '1100'){ ?> selected <?php } ?>  value="1100">11:00</option>
+									<option <?php if(@$inicio == '1130'){ ?> selected <?php } ?>  value="1130">11:30</option>
+
+									<option <?php if(@$inicio == '1200'){ ?> selected <?php } ?>  value="1200">12:00</option>
+									<option <?php if(@$inicio == '1230'){ ?> selected <?php } ?>  value="1230">12:30</option>
+
+									<option <?php if(@$inicio == '1300'){ ?> selected <?php } ?>  value="1300">13:00</option>
+									<option <?php if(@$inicio == '1330'){ ?> selected <?php } ?>  value="1330">13:30</option>
+
+									<option <?php if(@$inicio == '1400'){ ?> selected <?php } ?>  value="1400">14:00</option>
+									<option <?php if(@$inicio == '1430'){ ?> selected <?php } ?>  value="1430">14:30</option>
+
+									<option <?php if(@$inicio == '1500'){ ?> selected <?php } ?>  value="1500">15:00</option>
+									<option <?php if(@$inicio == '1530'){ ?> selected <?php } ?>  value="1530">15:30</option>
+
+									<option <?php if(@$inicio == '1600'){ ?> selected <?php } ?>  value="1600">16:00</option>
+									<option <?php if(@$inicio == '1630'){ ?> selected <?php } ?>  value="1630">16:30</option>
+
+									<option <?php if(@$inicio == '1700'){ ?> selected <?php } ?>  value="1700">17:00</option>
+									<option <?php if(@$inicio == '1730'){ ?> selected <?php } ?>  value="1730">17:30</option>
+
+									<option <?php if(@$inicio == '1800'){ ?> selected <?php } ?>  value="1800">18:00</option>
+									<option <?php if(@$inicio == '1830'){ ?> selected <?php } ?>  value="1830">18:30</option>
+
+									<option <?php if(@$inicio == '1900'){ ?> selected <?php } ?>  value="1900">19:00</option>
+									<option <?php if(@$inicio == '1930'){ ?> selected <?php } ?>  value="1930">19:30</option>
+
+									<option <?php if(@$inicio == '2000'){ ?> selected <?php } ?>  value="2000">20:00</option>
+									<option <?php if(@$inicio == '2030'){ ?> selected <?php } ?>  value="2030">20:30</option>
+
+									<option <?php if(@$inicio == '2100'){ ?> selected <?php } ?>  value="2100">21:00</option>
+									<option <?php if(@$inicio == '2130'){ ?> selected <?php } ?>  value="2130">21:30</option>
+
+									<option <?php if(@$inicio == '2200'){ ?> selected <?php } ?>  value="2200">22:00</option>
+									<option <?php if(@$inicio == '2230'){ ?> selected <?php } ?>  value="2230">22:30</option>
+																			
+							</select>
+
+						</div> 
+					</div>
+				
+					<div class="col-md-3">
+						 <div class="mb-3">				
+							<label for="exampleFormControlInput1" class="form-label">Horário Final</label>
+
+							<select class="form-select mt-1" aria-label="Default select example" name="fim">
+									
+									<option <?php if(@$fim == '--'){ ?> selected <?php } ?>  value="--">--</option>
+
+									<option <?php if(@$inicio == '0700'){ ?> selected <?php } ?>  value="0700">07:00</option>
+									<option <?php if(@$inicio == '0730'){ ?> selected <?php } ?>  value="0730">07:30</option>
+									<option <?php if(@$inicio == '0800'){ ?> selected <?php } ?>  value="0800">08:00</option>
+									<option <?php if(@$inicio == '0830'){ ?> selected <?php } ?>  value="0830">08:30</option>
+									<option <?php if(@$inicio == '0900'){ ?> selected <?php } ?>  value="0900">09:00</option>
+									<option <?php if(@$inicio == '0930'){ ?> selected <?php } ?>  value="0930">09:30</option>
+									<option <?php if(@$inicio == '1000'){ ?> selected <?php } ?>  value="1000">10:00</option>
+									<option <?php if(@$inicio == '1030'){ ?> selected <?php } ?>  value="1030">10:30</option>
+
+									<option <?php if(@$inicio == '1100'){ ?> selected <?php } ?>  value="1100">11:00</option>
+									<option <?php if(@$inicio == '1130'){ ?> selected <?php } ?>  value="1130">11:30</option>
+
+									<option <?php if(@$inicio == '1200'){ ?> selected <?php } ?>  value="1200">12:00</option>
+									<option <?php if(@$inicio == '1230'){ ?> selected <?php } ?>  value="1230">12:30</option>
+
+									<option <?php if(@$inicio == '1300'){ ?> selected <?php } ?>  value="1300">13:00</option>
+									<option <?php if(@$inicio == '1330'){ ?> selected <?php } ?>  value="1330">13:30</option>
+
+									<option <?php if(@$inicio == '1400'){ ?> selected <?php } ?>  value="1400">14:00</option>
+									<option <?php if(@$inicio == '1430'){ ?> selected <?php } ?>  value="1430">14:30</option>
+
+									<option <?php if(@$inicio == '1500'){ ?> selected <?php } ?>  value="1500">15:00</option>
+									<option <?php if(@$inicio == '1530'){ ?> selected <?php } ?>  value="1530">15:30</option>
+
+									<option <?php if(@$inicio == '1600'){ ?> selected <?php } ?>  value="1600">16:00</option>
+									<option <?php if(@$inicio == '1630'){ ?> selected <?php } ?>  value="1630">16:30</option>
+
+									<option <?php if(@$inicio == '1700'){ ?> selected <?php } ?>  value="1700">17:00</option>
+									<option <?php if(@$inicio == '1730'){ ?> selected <?php } ?>  value="1730">17:30</option>
+
+									<option <?php if(@$inicio == '1800'){ ?> selected <?php } ?>  value="1800">18:00</option>
+									<option <?php if(@$inicio == '1830'){ ?> selected <?php } ?>  value="1830">18:30</option>
+
+									<option <?php if(@$inicio == '1900'){ ?> selected <?php } ?>  value="1900">19:00</option>
+									<option <?php if(@$inicio == '1930'){ ?> selected <?php } ?>  value="1930">19:30</option>
+
+									<option <?php if(@$inicio == '2000'){ ?> selected <?php } ?>  value="2000">20:00</option>
+									<option <?php if(@$inicio == '2030'){ ?> selected <?php } ?>  value="2030">20:30</option>
+
+									<option <?php if(@$inicio == '2100'){ ?> selected <?php } ?>  value="2100">21:00</option>
+									<option <?php if(@$inicio == '2130'){ ?> selected <?php } ?>  value="2130">21:30</option>
+
+									<option <?php if(@$inicio == '2200'){ ?> selected <?php } ?>  value="2200">22:00</option>
+									
+									<option <?php if(@$inicio == '2230'){ ?> selected <?php } ?>  value="2230">22:30</option>
+																					
+							</select>
+						</div> 
+				    </div>
+
+				    <div class="col-md-6">
+						 <div class="mb-3">
+
+							<!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+				              <?php
+				                 $sql_code_states2 = "SELECT * FROM equipamento ORDER BY nome ASC";
+				                 $sql_query_states2 = $conexao->query($sql_code_states2) or die($conexao->error);                  
+				               ?>
+				               <label for="exampleFormControlInput1" class="form-label">Equipamento</label>
+				                <select data-width="100%" class="form-control mr-1" id="equipamento"  
+				                
+				                    <?php if(isset($_GET['nome'])) echo "disabled"; ?>  name="equipamento" >
+				                    
+				                    <option class="form-control" value="<?php echo @$equipamento ?>" ><?php echo @$nome_equipamento_modal ?></option>
+
+				                    <?php while($nome = $sql_query_states2->fetch_assoc()) { ?> 
+
+				                    <option 
+				                    <?php if(isset($_GET['nome']) && $_GET['nome'] == $nome['id']) echo "selected"; ?> value="<?php echo $nome['id']; ?>"><?php echo $nome['nome']; ?>
+				                      
+				                    </option>
+				                    <?php } ?>
+				                </select>
+				                <!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+
+						</div> 
+					</div>
+
+				    
+				    
+			    </div> <!-- fim grupo -->
+
+				
+
+				<div class="row"> <!-- grupo -->
+
+					<div class="col-md-3">
+						 <div class="mb-3">			
+							<label for="exampleFormControlInput1" class="form-label">Status</label>
+								<select class="form-select mt-1" aria-label="Default select example" name="status">
+																	
+									<option <?php if(@$status == 'Inativo'){ ?> selected <?php } ?>  value="Inativo">Inativo</option>
+
+									<option <?php if(@$status == 'Confirmado'){ ?> selected <?php } ?>  value="Confirmado">Confirmado</option>
+
+									<!--<option <?php if(@$status == 'Pronto'){ ?> selected <?php } ?>  value="Pronto">Pronto</option> -->
+									
+									<option <?php if(@$status == 'Cancelado'){ ?> selected <?php } ?>  value="Cancelado">Cancelado</option>
+																						
+							</select>
+						</div> 
+					</div>
+
+					<div class="col-md-3">
+						 <div class="mb-3">
+							
+							<label for="exampleFormControlInput1" class="form-label">Situação</label>
+								<select class="form-select mt-1" aria-label="Default select example" name="situacao">
+																	
+									<option <?php if(@$situacao == 'Em Espera'){ ?> selected <?php } ?>  value="Em Espera">Em Espera</option>
+
+									<option <?php if(@$situacao == 'Em Andamento'){ ?> selected <?php } ?>  value="Em Andamento">Em Andamento</option>
+
+									<option <?php if(@$situacao == 'Concluido'){ ?> selected <?php } ?>  value="Concluido">Concluido</option>
+																																					
+							</select>	
+							
+						</div> 
+					</div>	
+
+					
+
+					<div class="col-md-6">
+						 <div class="mb-3">											
+							
+							<!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+			              <?php
+			                 $sql_code_profissional = "SELECT * FROM usuarios ORDER BY nome ASC";
+			                 $sql_query_profissional = $conexao->query($sql_code_profissional) or die($conexao->error);                  
+			               ?>
+			               <label for="exampleFormControlInput1" class="form-label">Profissional</label>
+			                <select data-width="100%" class="form-control mr-1" id="profissional"  
+			                
+			                    <?php if(isset($_GET['nome'])) echo "disabled"; ?>  name="profissional" >
+			                    
+			                    <option class="form-control" value="<?php echo @$profissional ?>" ><?php echo @$nome_profissional_modal /*variavel errada!!!!!!!*/?></option>
+
+			                    <?php while($nome = $sql_query_profissional->fetch_assoc()) { ?> 
+
+			                    <option 
+			                    <?php if(isset($_GET['nome']) && $_GET['nome'] == $nome['id']) echo "selected"; ?> value="<?php echo $nome['id']; ?>"><?php echo $nome['nome']; ?>
+			                      
+			                    </option>
+			                    <?php } ?>
+			                </select>
+			                <!-- Busca do banco de dados para uma  select. Escolha dinamica -->
+
+						</div> 
+				    </div>
+
+
+			    </div> <!-- fim grupo -->
+
+
+			    <div class="row"> <!-- grupo -->
+
+
+			    	<div class="col-md-6">
+						 <div class="mb-3">				
+							
+							
+				              <?php
+				                 $sql_code_states3 = "SELECT * FROM servicos ORDER BY nome ASC";
+				                 $sql_query_states3 = $conexao->query($sql_code_states3) or die($conexao->error);
+
+				                 echo @$id_consulta_intens_clientes;
+
+				               ?>
+				               <label for="exampleFormControlInput1" class="form-label">Procedimento</label>
+				                <select data-width="100%" class="form-control mr-1" id="procedimento"  
+				                
+				                    <?php if(isset($_GET['nome'])) echo "disabled"; ?>  name="procedimento" >
+				                    
+				                    <option class="form-control" value="<?php echo @$procedimento ?>" ><?php echo @$nome_procedimento_modal ?></option>
+
+				                    <?php while($nome = $sql_query_states3->fetch_assoc()) { ?> 
+
+				                    <option 
+				                    <?php if(isset($_GET['nome']) && $_GET['nome'] == $nome['id']) echo "selected"; ?> value="<?php echo $nome['id']; ?>"><?php echo $nome['nome']; ?>
+				                      
+				                    </option>
+				                    <?php } ?>
+				                </select>
+
+
+				                
+
+
+						</div> 
+				    </div>
+					
+				
+					<div class="col-md-6">
+						 <div class="mb-3">										
+							 
+				              <?php
+				                 $sql_code_states4 = "SELECT * FROM produtos ORDER BY id ASC";
+				                 $sql_query_states4 = $conexao->query($sql_code_states4) or die($conexao->error);                  
+				               ?>
+				               <label for="exampleFormControlInput1" class="form-label">Produto</label>
+				                <select data-width="100%" class="form-control mr-1" id="produtos"  
+				                
+				                    <?php if(isset($_GET['nome'])) echo "disabled"; ?> name="produtos" >
+				                    
+				                    <option class="form-control" value="<?php echo @$produtos ?>" ><?php echo @$nome_produtos_modal ?></option>
+
+				                    <?php while($nome = $sql_query_states4->fetch_assoc()) { ?> 
+
+				                    <option 
+				                    <?php if(isset($_GET['nome']) && $_GET['nome'] == $nome['id']) echo "selected"; ?> value="<?php echo $nome['id']; ?>"><?php echo $nome['nome']; ?>
+				                      
+				                    </option>
+				                    <?php } ?>
+				                </select>
+				                 
+
+
+						</div> 
+				    </div>
+
+			    </div> <!-- fim grupo -->
+
+
+
+			    <div class="row"> <!-- grupo -->
+	
+
+					<!--<div class="col-md-4">
+						 <div class="mb-3">
+												
+							<label for="exampleFormControlInput1" class="form-label">Valor</label>
+							<input type="text" class="form-control" id="valor" name="valor" placeholder="Valor" value="<?php echo @$valor ?>">	
+
+						</div> 
+					</div>-->
+				
+					<div class="col-md-4">
+						 <div class="mb-3">
+
+						 <!--<label for="exampleFormControlInput1" class="form-label">Tel Cliente</label>
+							<input type="text" class="form-control" id="tel_cliente" name="tel_cliente" placeholder="Tel Cliente" value="<?php echo @$tel_cliente ?>">	
+							-->								
+						</div> 
+				    </div>
+
+				    
+
+			    </div> <!-- fim grupo -->
+
+			     
+
+
+		
+
+			    <div class="mb-3">
+						<label for="exampleFormControlInput1" class="form-label">Obs.</label>					
+						<textarea type="text" class="form-control" id="descricao" name="descricao"  placeholder="Descrição" maxlength="200"><?php echo @$descricao ?></textarea>
+				</div> 
+							
+
+					
+					<div class="form-group">
+						<label >Arquivo</label>
+						<input type="file" value="<?php echo @$foto ?>"  class="form-control-file" id="imagem" name="imagem" onChange="carregarImg();">
+					</div>
+
+					<div id="divImgConta" class="mt-4">
+						<?php if(@$arquivo != ""){ ?>
+							<img src="../img/<?php echo $pag ?>/<?php echo @$arquivo_pasta2 ?>"  width="200px" id="target">
+						<?php  }else{ ?>
+							<img src="../img/<?php echo $pag ?>/sem-foto.jpg" width="200px" id="target">
+						<?php } ?>
+					</div>
+					
+					
+
+
+					<small><div align="center" class="mt-1" id="mensagem">
+
+					</div> </small>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btn-fechar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+					<button name="btn-salvar" id="btn-salvar" type="submit" class="btn btn-primary">Salvar</button>
+
+					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
+
+					
+
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+
+<div class="modal fade" tabindex="-1" id="modalDeletar" >
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Excluir Agendamento</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form method="POST" id="form-excluir">
+				<div class="modal-body">
+
+					<p>Deseja Realmente Excluir o Registro?</p>
+
+					<small><div align="center" class="mt-1" id="mensagem-excluir">
+						
+					</div> </small>
+
+				</div>
+				<div class="modal-footer">
+					<button type="button" id="btn-fechar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+					<button name="btn-excluir" id="btn-excluir" type="submit" class="btn btn-danger">Excluir</button>
+
+					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
+
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
+
+
+<div class="modal fade" tabindex="-1" id="modalBaixar" >
+	<div class="modal-dialog modal-xl">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Baixar Registro</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<form method="POST" id="form-baixar">
+				<div class="modal-body">
+
+					<p>Deseja Realmente confirmar o Recebimento do pagamento desta agendamento?</p>
+
+					<small><div align="center" class="mt-1" id="mensagem-baixar">
+						
+					</div> </small>
+
+				</div>
+				
+				<div class="modal-footer">
+
+					<button type="button" id="btn-fechar-baixar" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+
+					<button name="btn-baixar" id="btn-excluir" type="submit" class="btn btn-success">Baixar</button>
+
+					<input name="id" type="hidden" value="<?php echo @$_GET['id'] ?>">
+
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+
+
+
+<?php 
+if(@$_GET['funcao'] == "novo"){ ?>
+	<script type="text/javascript">
+		var myModal = new bootstrap.Modal(document.getElementById('modalCadastrar'), {
+			backdrop: 'static'
+		})
+
+		myModal.show();
+	</script>
+<?php } ?>
+
+
+
+<?php 
+if(@$_GET['funcao'] == "editar"){ ?>
+	<script type="text/javascript">
+		var myModal = new bootstrap.Modal(document.getElementById('modalCadastrar'), {
+			backdrop: 'static'
+		})
+
+		myModal.show();
+	</script>
+<?php } ?>
+
+
+
+<?php 
+if(@$_GET['funcao'] == "deletar"){ ?>
+	<script type="text/javascript">
+		var myModal = new bootstrap.Modal(document.getElementById('modalDeletar'), {
+			
+		})
+
+		myModal.show();
+	</script>
+<?php } ?>
+
+
+
+<?php 
+if(@$_GET['funcao'] == "baixar"){ ?>
+	<script type="text/javascript">
+		var myModal = new bootstrap.Modal(document.getElementById('modalBaixar'), {
+			
+		})
+
+		myModal.show();
+	</script>
+<?php } ?>
+
+
+
+
+<!--AJAX PARA INSERÇÃO E EDIÇÃO DOS DADOS COM IMAGEM -->
+<script type="text/javascript">
+	$("#form").submit(function () {
+		var pag = "<?=$pag?>";
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: pag + "/inserir.php",
+			type: 'POST',
+			data: formData,
+
+			success: function (mensagem) {
+
+				$('#mensagem').removeClass()
+
+				if (mensagem.trim() == "Salvo com Sucesso!") {
+
+                    //$('#nome').val('');
+                    //$('#cpf').val('');
+                    $('#btn-fechar').click();
+                    window.location = "index.php?pagina="+pag;
+
+                } else {
+
+                	$('#mensagem').addClass('text-danger')
+                }
+
+                $('#mensagem').text(mensagem)
+
+            },
+
+            cache: false,
+            contentType: false,
+            processData: false,
+            xhr: function () {  // Custom XMLHttpRequest
+            	var myXhr = $.ajaxSettings.xhr();
+                if (myXhr.upload) { // Avalia se tem suporte a propriedade upload
+                	myXhr.upload.addEventListener('progress', function () {
+                		/* faz alguma coisa durante o progresso do upload */
+                	}, false);
+                }
+                return myXhr;
+            }
+        });
+	});
+</script>
+
+
+
+
+<!--AJAX PARA EXCLUIR DADOS -->
+<script type="text/javascript">
+	$("#form-excluir").submit(function () {
+		var pag = "<?=$pag?>";
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: pag + "/excluir.php",
+			type: 'POST',
+			data: formData,
+
+			success: function (mensagem) {
+
+				$('#mensagem').removeClass()
+
+				if (mensagem.trim() == "Excluído com Sucesso!") {
+
+					$('#mensagem-excluir').addClass('text-success')
+
+					$('#btn-fechar').click();
+					window.location = "index.php?pagina="+pag;
+
+				} else {
+
+					$('#mensagem-excluir').addClass('text-danger')
+				}
+
+				$('#mensagem-excluir').text(mensagem)
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+	});
+</script>
+
+
+
+
+
+
+<!--AJAX PARA EXCLUIR DADOS -->
+<script type="text/javascript">
+	$("#form-baixar").submit(function () {
+		var pag = "<?=$pag?>";
+		event.preventDefault();
+		var formData = new FormData(this);
+
+		$.ajax({
+			url: pag + "/baixar.php",
+			type: 'POST',
+			data: formData,
+
+			success: function (mensagem) {
+
+				$('#mensagem-baixar').removeClass()
+
+				if (mensagem.trim() == "Baixado com Sucesso!") {
+
+					$('#mensagem-baixar').addClass('text-success')
+
+					$('#btn-fechar-baixar').click();
+					window.location = "index.php?pagina="+pag;
+
+				} else {
+
+					$('#mensagem-baixar').addClass('text-danger')
+				}
+
+				$('#mensagem-baixar').text(mensagem)
+
+			},
+
+			cache: false,
+			contentType: false,
+			processData: false,
+
+		});
+	});
+</script>
+
+
+
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$('#example').DataTable({
+			"ordering": false
+		});
+	} );
+</script>
+
+
+
+
+
+
+<!--SCRIPT PARA CARREGAR IMAGEM -->
+<script type="text/javascript">
+
+	function carregarImg() {
+
+		var target = document.getElementById('target');
+		var file = document.querySelector("input[type=file]").files[0];
+
+		var arquivo = file['name'];
+		resultado = arquivo.split(".", 2);
+        //console.log(resultado[1]);
+
+        if(resultado[1] === 'pdf'){
+        	$('#target').attr('src', "../img/agendar_conectado/pdf.png");
+        	return;
+        }
+
+        var reader = new FileReader();
+
+        reader.onloadend = function () {
+        	target.src = reader.result;
+        };
+
+        if (file) {
+        	reader.readAsDataURL(file);
+
+
+        } else {
+        	target.src = "";
+        }
+    }
+
+</script>

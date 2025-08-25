@@ -1,0 +1,10 @@
+<svg id="Money-Arrow-Down--Streamline-Atlas" xmlns="http://www.w3.org/2000/svg" viewBox="-0.5 -0.5 16 16" height="16" width="16">
+  <desc>
+    Money Arrow Down Streamline Icon: https://streamlinehq.com
+  </desc>
+  <defs></defs>
+  <path d="M9.375 4.0625h-2.1875A0.9375 0.9375 0 0 0 6.25 5a0.9375 0.9375 0 0 0 0.9375 0.9375h0.625A0.9375 0.9375 0 0 1 8.75 6.875a0.9375 0.9375 0 0 1 -0.9375 0.9375H5.625" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="1"></path>
+  <path d="m7.5 9.0625 0 -1.25" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="1"></path>
+  <path d="m7.5 4.0625 0 -1.25" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="1"></path>
+  <path d="m1.875 8.4375 5.625 5.625 5.625 -5.625 -1.875 0 0 -7.5 -7.5 0 0 7.5 -1.875 0z" fill="none" stroke="#000000" stroke-miterlimit="10" stroke-width="1"></path>
+</svg>

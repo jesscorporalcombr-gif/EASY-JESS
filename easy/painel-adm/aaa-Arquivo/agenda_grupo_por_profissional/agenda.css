@@ -1,0 +1,53 @@
+#agenda-container {
+            float: right;
+            width: 85%; /* ou a largura que desejar */
+            /* Adicione quaisquer outros estilos que você precisa para o contêiner da agenda */
+        
+        /* Limpeza de floats */
+                               table {
+                    width: 95%;
+                    border-collapse: collapse;
+                    table-layout: fixed; /* Faz com que todas as colunas tenham a mesma largura */
+                    margin-top: 10px;
+                    margin-left: 5px;
+                    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+                }
+                table, th, td {
+                    border: 1px solid grey;
+                }
+                th, td {
+                    text-align: left;
+                    border-bottom: 1px solid #ddd;
+                }
+                th {
+                    background-color: #6495ED;
+                    color: white;
+                    text-align: center;
+                    padding: 12px;
+                }
+                th:first-child, td:first-child {
+                    width: 80px; /* Largura fixa para a coluna de horários */
+                    text-align: center; /* Centraliza o texto dos horários */
+                }
+                .prof-header img {
+                    width: 20px; /* Ajuste a largura da imagem conforme necessário */
+                    height: auto;
+                    display: block;
+                    margin: 0 auto;
+                }
+                .prof-header {
+                    padding: 5px 0; /* Ajuste o padding conforme necessário */
+                }
+                
+                 /* Aplica o efeito de hover somente às células que não são da primeira linha ou coluna */
+                    tr:not(:first-child) td:not(:first-child):hover {
+                        background-color: #6bd3d1; /* Um tom mais escuro quando o mouse passa sobre a célula */
+                    }
+                
+                /* Estilo específico para a primeira célula de cada linha */
+                td:first-child, th:first-child {
+                    background-color: #f0f0f0; /* Um cinza claro para a primeira célula */
+                    text-align: center;
+                } 
+                }
+            }

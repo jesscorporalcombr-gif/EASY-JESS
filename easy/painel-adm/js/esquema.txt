@@ -1,0 +1,11 @@
+ ├─ index.php
+ ├─ agendaAtendimentos.php
+ ├─ Modals
+ |       └─ janelaAgenda.php
+ └─ js
+     ├─ chamaCliente.js              ←  autocomplete global
+     ├─ janelaDrag.js                ←  arrastar/minimizar/fechar
+     ├─ janelaClienteInfo.js         ←  foto + dados do cliente
+     ├─ janelaPagamentos.js          ←  (exemplo futuro)
+     ├─ janelaContasAReceber.js      ←  (exemplo futuro)
+     └─ main-agendamentos.js         ←  orquestra a janela

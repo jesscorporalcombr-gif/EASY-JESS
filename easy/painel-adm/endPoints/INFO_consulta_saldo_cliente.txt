@@ -1,0 +1,76 @@
+<?php
+// parâmetros de exemplo
+$id_cliente   = 123;
+$id_venda     = 45;           // ou null se quiser só o saldo atual
+$data_posicao = '2025-06-01'; // ou null
+
+// monta a URL com query string
+$params = [
+    'id_cliente'   => $id_cliente,
+];
+if ($id_venda)     $params['id_venda']     = $id_venda;
+if ($data_posicao) $params['data_posicao'] = $data_posicao;
+
+$url = 'https://seu-dominio.com/endPoints/consultar_saldo_cliente.php'
+     . '?' . http_build_query($params);
+
+// faz a requisição
+$ch = curl_init($url);
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_TIMEOUT        => 5,
+]);
+$json = curl_exec($ch);
+if ($json === false) {
+    throw new Exception('cURL error: '.curl_error($ch));
+}
+curl_close($ch);
+
+// decodifica o JSON e pega o saldo
+$data = json_decode($json, true);
+if (isset($data['error'])) {
+    throw new Exception('API error: '.$data['error']);
+}
+
+$saldo = $data['saldo']; // aqui está o saldo retornado
+echo "Saldo do cliente: R$ ".number_format($saldo, 2, ',', '.');
+
+
+---------------------------------------------------------------------------------------
+
+Com Java Script
+
+
+<script>
+  async function consultarSaldo(clienteId, vendaId = null, dataPosicao = null) {
+    // constrói a query string
+    const params = new URLSearchParams({ id_cliente: clienteId });
+    if (vendaId)     params.set('id_venda', vendaId);
+    if (dataPosicao) params.set('data_posicao', dataPosicao);
+
+    const url = `/endPoints/consultar_saldo_cliente.php?${params.toString()}`;
+
+    try {
+      const resp = await fetch(url);
+      if (!resp.ok) throw new Error('HTTP ' + resp.status);
+      const data = await resp.json();
+      if (data.error) throw new Error(data.error);
+
+      // pega o saldo
+      const saldo = data.saldo;
+      console.log('Saldo do cliente:', saldo);
+      // Exemplo: atualizar um elemento na página
+      document.getElementById('saldoCliente').textContent =
+        'R$ ' + saldo.toFixed(2).replace('.', ',');
+    } catch (err) {
+      console.error('Erro ao consultar saldo:', err);
+    }
+  }
+
+  // Exemplo de uso:
+  consultarSaldo(123, 45, '2025-06-01');
+</script>
+
+<!-- Em algum lugar no HTML -->
+<div>Saldo do cliente: <span id="saldoCliente">carregando...</span></div>
+

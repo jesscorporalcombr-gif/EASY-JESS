@@ -1,0 +1,3 @@
+a conexao desta area é para os orçamentos/comanda
+
+function.php é usado para abrir orçamento. encotrar cliente pelo cpf
