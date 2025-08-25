@@ -23,4 +23,5 @@ try{
   echo json_encode(['ok'=>true,'response_id'=>$rid,'version_id'=>$vid]);
 }catch(Exception $e){
   echo json_encode(['ok'=>false,'error'=>$e->getMessage()]);
+//teste comit
 }
