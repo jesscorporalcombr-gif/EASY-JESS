@@ -870,7 +870,7 @@ document.addEventListener('change', function(e) {
       $pagina_ir = $_GET['pagina'];
 
       if(!$pagina_ir){
-      echo 
+      echo pagi
         require_once($menu[1].'.php');
          exit;
       }
@@ -886,4 +886,4 @@ document.addEventListener('change', function(e) {
 
 
 
-</html
+</html>
