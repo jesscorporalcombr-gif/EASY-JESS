@@ -870,7 +870,8 @@ document.addEventListener('change', function(e) {
       $pagina_ir = $_GET['pagina'];
 
       if(!$pagina_ir){
-        require_once($menu[1].'.php');}
+        require_once($menu[1].'.php');
+      }
 
       require_once($pagina_ir);
   }
