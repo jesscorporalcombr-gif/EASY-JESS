@@ -867,6 +867,8 @@ document.addEventListener('change', function(e) {
         }
     }
 
+
+  }
       $pagina_ir = $_GET['pagina']??'';
       echo ' a pagia é: '. $pagina_ir;
       if($pagina_ir==''){
@@ -876,8 +878,6 @@ document.addEventListener('change', function(e) {
       }
 
       require_once($pagina_ir);
-  }
-
   // Se o loop terminar sem encontrar uma correspondência, ou se 'pagina' não estiver definido ou estiver vazio, carrega o padrão.
   //require_once($menu[1].'.php');
   //require_once($pagina.'.php');
