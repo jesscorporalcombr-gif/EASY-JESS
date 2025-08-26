@@ -867,7 +867,7 @@ document.addEventListener('change', function(e) {
         }
     }
 
-      $pagina_ir = $_GET['pagina']??'null';
+      $pagina_ir = $_GET['pagina']??'';
 
       if(!$pagina_ir){
       echo ' a pagia é: '. $pagina_ir;
