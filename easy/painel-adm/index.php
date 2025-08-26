@@ -876,9 +876,9 @@ document.addEventListener('change', function(e) {
         require_once($menu[1].'.php');
          exit;
       }
-if (substr($pagina_ir, -4) !== '.php') {
-    $pagina_ir .= '.php';
-}
+      if (substr($pagina_ir, -4) !== '.php') {
+          $pagina_ir .= '.php';
+      }
       require_once($pagina_ir);
   // Se o loop terminar sem encontrar uma correspondência, ou se 'pagina' não estiver definido ou estiver vazio, carrega o padrão.
   //require_once($menu[1].'.php');
