@@ -871,6 +871,7 @@ document.addEventListener('change', function(e) {
 
       if(!$pagina_ir){
         require_once($menu[1].'.php');
+         exit;
       }
 
       require_once($pagina_ir);
