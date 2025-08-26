@@ -870,7 +870,6 @@ document.addEventListener('change', function(e) {
 
   }
       $pagina_ir = $_GET['pagina']??'';
-      echo ' a pagia é: '. $pagina_ir;
       if($pagina_ir==''){
       
         require_once($menu[1].'.php');
